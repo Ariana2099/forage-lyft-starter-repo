@@ -1,6 +1,6 @@
 from car import Car
-from parts import Engine
-from parts import Battery
+from model import Engine
+from model import Battery
 
 class CarFactory(Car, Engine, Battery):
 
