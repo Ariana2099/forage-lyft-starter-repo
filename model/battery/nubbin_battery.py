@@ -1,6 +1,4 @@
 from battery import Battery
-from datetime import datetime
-
 
 class NubbinBattery(Battery):
     def __init__(self, last_service_date, current_date):
