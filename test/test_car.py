@@ -1,8 +1,10 @@
 import unittest
+import numpy
 from datetime import datetime
 
 from model import Engine
 from model import Battery
+from model import Tire
 
 
 class testCapulet(unittest.TestCase):
@@ -69,7 +71,7 @@ class testSternman(unittest.TestCase):
 class testSpindler(unittest.TestCase):
     def test_battery_needs_service(self):
         current_date = datetime.today().date()
-        last_service_date = current_date.replace(year = current_date.year - 3)
+        last_service_date = current_date.replace(year = current_date.year - 4)
         spin_bat = Battery.SpindlerBattery(last_service_date, current_date)
         self.assertTrue(spin_bat.needs_service())
 
@@ -81,13 +83,13 @@ class testSpindler(unittest.TestCase):
 
     def test_battery_needs_service_threshold(self):
         current_date = datetime.today().date()
-        last_service_date = current_date.replace(year = current_date.year - 2, day = current_date.day + 10)
+        last_service_date = current_date.replace(year = current_date.year - 3, day = current_date.day + 10)
         spin_bat = Battery.SpindlerBattery(last_service_date, current_date)
         self.assertTrue(spin_bat.needs_service())
 
     def test_battery_should_not_be_service_threshold(self):
         current_date = datetime.today().date()
-        last_service_date = current_date.replace(year = current_date.year - 2)
+        last_service_date = current_date.replace(year = current_date.year - 3)
         spin_bat = Battery.SpindlerBattery(last_service_date, current_date)
         self.assertFalse(spin_bat.needs_service())
 
@@ -115,7 +117,68 @@ class testNubbin(unittest.TestCase):
         last_service_date = current_date.replace(year = current_date.year - 4)
         nub_bat = Battery.NubbinBattery(last_service_date, current_date)
         self.assertFalse(nub_bat.needs_service())
+
+class testCarriagan(unittest.TestCase):
+    def test_one_tire_needs_service(self):
+        sensors = numpy.array([0, 0, 0, 1])
+        car_tire = Tire.CarriganTire(sensors)
+        self.assertTrue(car_tire.needs_service())
+
+    def test_two_tires_needs_service(self):
+        sensors = numpy.array([0, 0, 1, 1])
+        car_tire = Tire.CarriganTire(sensors)
+        self.assertTrue(car_tire.needs_service())
+
+    def test_three_tires_needs_service(self):
+        sensors = numpy.array([0, 1, 1, 1])
+        car_tire = Tire.CarriganTire(sensors)
+        self.assertTrue(car_tire.needs_service())
     
+    def test_all_tires_needs_service(self):
+        sensors = numpy.array([1, 1, 1, 1])
+        car_tire = Tire.CarriganTire(sensors)
+        self.assertTrue(car_tire.needs_service())
+
+    def test_one_tire_needs_service_threshold(self):
+        sensors = numpy.array([0, 0, 0, 0.9])
+        car_tire = Tire.CarriganTire(sensors)
+        self.assertTrue(car_tire.needs_service())
+
+    def test_two_tires_needs_service_threshold(self):
+        sensors = numpy.array([0, 0, 0.9, 0.9])
+        car_tire = Tire.CarriganTire(sensors)
+        self.assertTrue(car_tire.needs_service())
+
+    def test_three_tires_needs_service_threshold(self):
+        sensors = numpy.array([0, 0.9, 0.9, 0.9])
+        car_tire = Tire.CarriganTire(sensors)
+        self.assertTrue(car_tire.needs_service())
+
+    def test_all_tires_needs_service_threshold(self):
+        sensors = numpy.array([0.9, 0.9, 0.9, 0.9])
+        car_tire = Tire.CarriganTire(sensors)
+        self.assertTrue(car_tire.needs_service())
+    
+    def test_tires_should_not_be_serviced(self):
+        sensors = numpy.array([0, 0, 0, 0])
+        car_tire = Tire.CarriganTire(sensors)
+        self.assertFalse(car_tire.needs_service())
+
+class testOctoprime(unittest.TestCase):
+    def test_tire_needs_service(self):
+        sensors = numpy.array([0.5, 1, 1, 0.7])
+        octo_tire = Tire.OctoprimeTire(sensors)
+        self.assertTrue(octo_tire.needs_service())
+
+    def test_tire_needs_service_threshold(self):
+        sensors = numpy.array([0, 1, 1, 1])
+        octo_tire = Tire.OctoprimeTire(sensors)
+        self.assertTrue(octo_tire.needs_service())
+
+    def test_tires_should_not_be_serviced(self):
+        sensors = numpy.array([0, 0.2, 1, 0.1])
+        octo_tire = Tire.OctoprimeTire(sensors)
+        self.assertFalse(octo_tire.needs_service())
 
 if __name__ == '__main__':
     unittest.main()
